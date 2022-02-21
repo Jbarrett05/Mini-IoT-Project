@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini IoT</title>
+    <h1>Dashboard:</h1>
+    <script type="text/javascript" 
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+    </script>
+</head>
+
+<body>
+    <button id="getLEDValue">Get LED Value</button>
+    <button id="getPulse">Get Pulse</button>
+    <button id="ledON">Turn on LED</button>
+    <button id="ledOFF">Turn off LED</button>
+
+    <div>
+        LED Value:
+        <div id="led_output">-1</div>
+        Pulse Senor:
+        <div id="pulse_output">-1</div>
+        LED Status:
+        <div id="led_status">N/A</div>
+    </div>
+
+    <script>
+        const pulse_url = 'https://blynk.cloud/external/api/get?token=XvjWuyxhETkiGm83NYTwfqJa_pDAfTNz&a0'
+        const led_url = 'https://blynk.cloud/external/api/get?token=XvjWuyxhETkiGm83NYTwfqJa_pDAfTNz&v0'
+        const update_led_url = 'https://blynk.cloud/external/api/update?token=XvjWuyxhETkiGm83NYTwfqJa_pDAfTNz&'
+
+        document.getElementById('getLEDValue').addEventListener('click', getLED);
+        document.getElementById('getPulse').addEventListener('click', getPulse);
+        document.getElementById('ledON').addEventListener('click', ledON);
+        document.getElementById('ledOFF').addEventListener('click', ledOFF);
+
+        //function to get LED value set
+        function getLED(){
+            $.ajax(led_url, {
+                success: function(data,status, xhr){
+                    document.getElementById('led_output').innerHTML = data,
+                    getLED()
+                },
+                error: function(jqXhr, textStatus, errorMessage){
+                    console.log(err),
+                    getLED()
+                }
+            })
+        }
+
+        //function to get Pulse data
+        function getPulse(){
+            //recursive function to 
+            $.ajax(pulse_url, {
+                success: function(data,status, xhr){
+                    document.getElementById('pulse_output').innerHTML = data,
+                    getPulse()
+                },
+                error: function(jqXhr, textStatus, errorMessage){
+                    console.log(err),
+                    getPulse()
+                }
+            })
+        }
+
+        //turn on LED
+        function ledON(){
+            fetch(update_led_url + 'v0=1')
+            .then((res) => res.text())
+            .then(document.getElementById('led_status').innerHTML = 'ON')
+            .catch((err) => console.log(err))
+        }
+
+        //turn off LED
+        function ledOFF(){
+            fetch(update_led_url + 'v0=0')
+            .then((res) => res.text())
+            .then(document.getElementById('led_status').innerHTML = 'OFF')
+            .catch((err) => console.log(err))
+        }
+
+    </script>
+</body>
+
+</html>
